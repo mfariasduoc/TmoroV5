@@ -44,7 +44,7 @@ public class TeatroMorov5 {
     static ArrayList<String> clienteZona = new ArrayList<>();   // Lista para nombres de producto
     static ArrayList<Integer> asientoClientes = new ArrayList<>();    // Lista para el asiento del clientes
     double Vdescuento = 0;
-
+    static  int tipoClienteNum = 0;
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         //Variables Globales
@@ -62,7 +62,7 @@ public class TeatroMorov5 {
         LocalDateTime fecha = LocalDateTime.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String fechas = fecha.format(formato);
-        int contadorMenorEdad=0,contadorFemenino=0;
+        int contadorMenorEdad = 0, contadorFemenino = 0;
         //inicializar Vectores como true (disponibles)  
         int palcoLargo = VectorPalco.length;
         int plateaLargo = VectorPlatea.length;
@@ -82,6 +82,7 @@ public class TeatroMorov5 {
         }
         int edadCliente = 0, seleccionZona = 0, VdescSinDecimales;
         String tipoCliente = "", ubicacion = "", cliente = "";
+        
         // int valorEntrada=0, 
         boolean salir = false;
         System.out.println("\033[34m*---------------------------*");
@@ -137,8 +138,9 @@ public class TeatroMorov5 {
                     } while (esEstudiante);
                 } while (respuestaEstudiante != 1 && respuestaEstudiante != 2);
                 if (respuestaEstudiante == 1) {
-                    System.out.println("Como estudiante tienes un descuento del " + (DESCUENTO_ESTUDIANTE * 100) + "%");
+                    //System.out.println("Como estudiante tienes un descuento del " + (DESCUENTO_ESTUDIANTE * 100) + "%");
                     tipoCliente = "Estudiante";
+                    tipoClienteNum = 2;
                     esEstudiante = true;
                 }
                 boolean correctorEdad;
@@ -156,42 +158,43 @@ public class TeatroMorov5 {
                     } while (correctorEdad);
                 } while (edadCliente < 5 || edadCliente > 120);
                 if (edadCliente < 18) {
-                    System.out.println("Al ser menor de edad tienes un descuento del " + (DESCUENTO_NINOS * 100) + "%");
+                    //System.out.println("Al ser menor de edad tienes un descuento del " + (DESCUENTO_NINOS * 100) + "%");
                     tipoCliente = "Menor Edad";
+                    tipoClienteNum = 1;
                 } else if (edadCliente > 64) {
-                    System.out.println("al pertenecer a la tercera edad tiene un descuento del " + (DESCUENTO_TERCERA_EDAD * 100) + "%");
+                    //System.out.println("al pertenecer a la tercera edad tiene un descuento del " + (DESCUENTO_TERCERA_EDAD * 100) + "%");
                     tipoCliente = "Tercera Edad";
+                    tipoClienteNum = 4;
                 } else if (tipoCliente != "Estudiante" && tipoCliente != "Tercera Edad" && tipoCliente != "Menor Edad") {
                     tipoCliente = "General";
+                    tipoClienteNum = 5;
                 }
                 System.out.print("Hola " + cliente + ", Ingrese su Sexo(1-Masculino o 2-Femenino)");
-            boolean esMasculino;
-            int respuestaSexo = 0;
-            do { //corrector de ingreso de caracteres distintos a los que se pide
-                do {
-                    try {
-                        esMasculino = false;
-                        respuestaSexo = scanner.nextInt();
-                    } catch (InputMismatchException ex) {
-                        System.out.println("Intente Nuevamente");
-                        scanner.next();
-                        esMasculino = true;
-                    }
-                } while (esMasculino);
-            } while (respuestaSexo != 1 && respuestaSexo != 2);
-            if(respuestaSexo == 1){
-                tipoCliente = "Masculino";
-               
+                boolean esMasculino;
+                int respuestaSexo = 0;
+                do { //corrector de ingreso de caracteres distintos a los que se pide
+                    do {
+                        try {
+                            esMasculino = false;
+                            respuestaSexo = scanner.nextInt();
+                        } catch (InputMismatchException ex) {
+                            System.out.println("Intente Nuevamente");
+                            scanner.next();
+                            esMasculino = true;
+                        }
+                    } while (esMasculino);
+                } while (respuestaSexo != 1 && respuestaSexo != 2);
+                if (respuestaSexo == 1) {
+                    tipoCliente = "Masculino";
+                    tipoClienteNum = 3;
+                } else if (respuestaSexo == 2) {
+                    //System.out.println("Como mujer tienes un descuento del  " + (DESCUENTO_FEMENINO * 100) + "%");
+                    tipoCliente = "Femenino";
+
+                }
+
             }
-            else if (respuestaSexo == 2) {
-                System.out.println("Como mujer tienes un descuento del  " + (DESCUENTO_FEMENINO * 100) + "%");
-                tipoCliente = "Femenino";
-                
-            }
-                
-                
-            }
-            
+
             int porcentajeDescuento = 0,
                     pagoBase = 0;
             int reservarOtraEntrada = 1;
@@ -359,12 +362,27 @@ public class TeatroMorov5 {
                                 } else {
                                     ComprarOtraEntrada = 2;
                                 }
-                            }
+                            }//Agrupamos todos los datos y los ingresamos a sus listas correspondientes
                             nombreClientes.add(cliente);
                             edadClientes.add(edadCliente);
                             tipoClientes.add(tipoCliente);
+                            switch (tipoClienteNum) {
+                                case 1:
+                                    Descuentos.add(10);
+                                    System.out.println("Al Ser menor de edad, te regalamos un 10% de descuento");
+                                case 2:
+                                    Descuentos.add(15);
+                                    System.out.println("Al Ser estudiante, te regalamos un 15% de descuento");
+                                case 3:
+                                    Descuentos.add(20);
+                                    System.out.println("Al Ser mujer, te regalamos un 20% de descuento");
+                                case 4:
+                                    Descuentos.add(25);
+                                    System.out.println("Al pertenecer a la tercera edad, te regalamos un 25% de descuento");
+                                case 5:
+                                    Descuentos.add(0);
+                            }
                             costoBase.add(pagoBase);
-                            Descuentos.add(porcentajeDescuento);
                             clienteZona.add(ubicacion);
                             asientoClientes.add(asiento);
                         } while (ComprarOtraEntrada == 1);
@@ -418,7 +436,7 @@ public class TeatroMorov5 {
                         break;
                     } else {
                         int contadorEstudiante = 0, contadorTerceraEdad = 0, contadorGeneral = 0;
-                        int ventaEstudiante = 0, ventaTerceraEdad = 0, ventaGeneral = 0, ventaMenorEdad=0, ventaFemenino=0;
+                        int ventaEstudiante = 0, ventaTerceraEdad = 0, ventaGeneral = 0, ventaMenorEdad = 0, ventaFemenino = 0;
                         System.out.println("Ventas realizadas: ");
                         int size = nombreClientes.size();
                         for (int i = 0; i < size; i++) {
@@ -432,8 +450,7 @@ public class TeatroMorov5 {
                             if (tipoClientes.get(i) == "Menor Edad") {
                                 contadorMenorEdad += 1;
                                 ventaMenorEdad += VdescSinDecimales;
-                            }
-                            else if (tipoClientes.get(i) == "Estudiante") {
+                            } else if (tipoClientes.get(i) == "Estudiante") {
                                 contadorEstudiante += 1;
                                 ventaEstudiante += VdescSinDecimales;
                             } else if (tipoClientes.get(i) == "Femenino") {
@@ -849,5 +866,7 @@ public class TeatroMorov5 {
                     break;
             }
         }
+        scanner.close();
     }
+    
 }
